@@ -6,11 +6,12 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.sid.bank_account_service.Enum.AccountType;
 
 import java.util.Date;
-@Entity@NoArgsConstructor@AllArgsConstructor @Builder
+@Entity@NoArgsConstructor@AllArgsConstructor @Builder@Data
 public class BankAccount {
     @Id
     private String id ;
