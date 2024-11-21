@@ -5,8 +5,11 @@ import org.sid.bank_account_service.Entities.BankAccount;
 import org.sid.bank_account_service.Repository.BankAccountRepository;
 import org.sid.bank_account_service.dto.BankAccountRequestDTO;
 import org.sid.bank_account_service.dto.BankAccountResponseDTO;
+import org.sid.bank_account_service.mapper.Accountmapper;
+import org.sid.bank_account_service.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 
 import java.util.Date;
 import java.util.UUID;
@@ -16,24 +19,26 @@ import java.util.UUID;
 public class AccountServiceImpl implements AccountService {
     @Autowired
     private BankAccountRepository bankAccountRepository;
+    @Autowired
+    private Accountmapper accountmapper;
+
     @Override
-    public BankAccountResponseDTO addAccount(BankAccountRequestDTO bankAccountDTO) {
+    public BankAccountResponseDTO addAccount(BankAccountRequestDTO bankAccountRequestDTO) {
+        // Créer une nouvelle entité BankAccount avec les données fournies
         BankAccount bankAccount = BankAccount.builder()
                 .id(UUID.randomUUID().toString())
-                .type(bankAccountDTO.getType())
-                .Balance(bankAccountDTO.getBalance())
+                .type(bankAccountRequestDTO.getType())
+                .Balance(bankAccountRequestDTO.getBalance())
                 .CreatedAT(new Date())
-                .currency(bankAccountDTO.getCurrency())
+                .currency(bankAccountRequestDTO.getCurrency())
                 .build();
+
+        // Sauvegarder dans la base de données
         BankAccount savedBankAccount = bankAccountRepository.save(bankAccount);
 
-        BankAccountResponseDTO bankAccountResponseDTO = BankAccountResponseDTO.builder()
-                .id(savedBankAccount.getId())
-                .type(savedBankAccount.getType())
-                .Balance(savedBankAccount.getBalance())
-                .CreatedAT(savedBankAccount.getCreatedAT())
-                .currency(savedBankAccount.getCurrency())
-                .build();
-        return bankAccountResponseDTO;
+        // Convertir en DTO de réponse à l'aide du mapper
+        BankAccountResponseDTO bankAccountResponsetDTO = accountmapper.fromBankAccount(savedBankAccount);
+
+        return bankAccountResponsetDTO;
     }
 }
